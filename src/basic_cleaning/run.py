@@ -6,7 +6,7 @@ import argparse
 import logging
 import wandb
 import pandas as pd
-
+import os
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
@@ -22,11 +22,13 @@ def go(args):
     run = wandb.init(project="nyc_airbnb", group="cleaning", save_code=True)
     artifact_local_path = run.use_artifact(args.input_artifact).file()
     df = pd.read_csv(artifact_local_path)
+
     # Drop outliers
     min_price = args.min_price
     max_price = args.max_price
     idx = df['price'].between(min_price, max_price)
     df = df[idx].copy()
+
     # Convert last_review to datetime
     df['last_review'] = pd.to_datetime(df['last_review'])
 
@@ -34,10 +36,14 @@ def go(args):
     # Only implement this step when reaching Step 6: Pipeline Release and Updates
     # in the project.
     # Add longitude and latitude filter to allow test_proper_boundaries to pass
-    # ENTER CODE HERE
+    # Drop rows in the dataset that are not in the proper geolocation
+    idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
+    df = df[idx].copy()
 
     # Save the cleaned data
-    df.to_csv('clean_sample.csv',index=False)
+    logger.info("Saving the output artifact")
+    file_name = "clean_sample.csv"
+    df.to_csv(file_name, index=False)
 
     # log the new data.
     artifact = wandb.Artifact(
@@ -48,6 +54,7 @@ def go(args):
     artifact.add_file("clean_sample.csv")
     run.log_artifact(artifact)
 
+    os.remove(file_name)
 
 # TODO: In the code below, fill in the data type for each argument. The data type should be str, float or int. 
 # TODO: In the code below, fill in a description for each argument. The description should be a string.
@@ -57,46 +64,45 @@ if __name__ == "__main__":
   
     parser.add_argument(
         "--input_artifact", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
+        type = str,
+        help = "Fully-qualified name for the input artifact",
         required = True
     )
 
     parser.add_argument(
         "--output_artifact", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
+        type = str,
+        help = "Name of the output artifact",
         required = True
     )
 
     parser.add_argument(
         "--output_type", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
+        type = str,
+        help = "Type of the artifact",
         required = True
     )
 
     parser.add_argument(
         "--output_description", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
+        type = str,
+        help = "Description for the artifact",
         required = True
     )
 
     parser.add_argument(
         "--min_price", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
+        type = float,
+        help = "Minimum price for cleaning outliers",
         required = True
     )
 
     parser.add_argument(
         "--max_price",
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
+        type = float,
+        help = "Maximum price for cleaning outliers",
         required = True
     )
-
 
     args = parser.parse_args()
 
