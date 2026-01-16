@@ -179,3 +179,7 @@ Please, make sure all steps are using **the same** python version and that you h
 ## License
 
 [License](LICENSE.txt)
+
+## Submission Links
+* Github Repository: https://github.com/namin1993/Project-Build-an-ML-Pipeline-Starter.git
+* Wandb link: https://wandb.ai/namin8-western-governors-university/nyc_airbnb?nw=nwusernamingeneral
