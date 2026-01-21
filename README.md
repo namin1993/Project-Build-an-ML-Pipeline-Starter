@@ -180,6 +180,14 @@ Please, make sure all steps are using **the same** python version and that you h
 
 [License](LICENSE.txt)
 
-## Submission Links
+## Discussion
+
+If I were to create future releases of this pipeline, I would first focus on improving consistency and reproducibility at the infrastructure level. This includes standardizing how components are executed so that all steps follow the same pattern (either all local or all remote), reducing path-related bugs and making the pipeline easier to maintain. 
+
+I would also stabilize environment management by pinning a consistent Python version (such as Python 3.10) and aligning dependency versions across all components. This would prevent frequent conda solver failures and ensure that the pipeline can be reliably reproduced across different machines and operating systems.
+
+In addition, I would strengthen the data and artifact management layers of the pipeline. On the data side, I would extend validation beyond the current checks by adding missing value thresholds, type validation, and duplicate detection to better enforce a formal data contract. On the artifact side, I would standardize how all components log artifacts by using a single logging function with consistent naming and metadata for each run.py file. Together, these changes would improve data quality, traceability, and long-term maintainability of the machine learning pipeline.
+
+## Submission URL Links
 * Github Repository: https://github.com/namin1993/Project-Build-an-ML-Pipeline-Starter.git
 * Wandb link: https://wandb.ai/namin8-western-governors-university/nyc_airbnb?nw=nwusernamingeneral
